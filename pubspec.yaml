@@ -1,0 +1,36 @@
+name: cinevault
+description: A movie discovery app to solve decision fatigue.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # 1. สำหรับการนำทางข้ามหน้า (Navigation) [cite: 31, 59]
+  go_router: ^13.2.0
+
+  # 2. สำหรับการจัดการสถานะ (State Management) [cite: 31]
+  flutter_riverpod: ^2.5.1
+
+  # 3. สำหรับการเชื่อมต่อ Backend (TMDB API) [cite: 33]
+  http: ^1.2.0
+
+  # 4. ไอคอนเพิ่มเติม (ถ้าต้องการ)
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  # หากคุณมีรูปภาพโลโก้แอปในโฟลเดอร์ assets ให้เปิดใช้งานตรงนี้
+  # assets:
+  #   - assets/images/
