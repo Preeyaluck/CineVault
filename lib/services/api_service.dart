@@ -31,4 +31,38 @@ class ApiService {
       throw Exception('Network Error: $e');
     }
   }
+
+  Future<List<Movie>> searchMovies(String query) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
+      return [];
+    }
+
+    final uri = Uri.parse('${AppConstants.baseUrl}/search/movie').replace(
+      queryParameters: {
+        'api_key': AppConstants.tmdbApiKey,
+        'query': trimmed,
+        'include_adult': 'false',
+        'language': AppConstants.defaultLanguage,
+      },
+    );
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['results'] != null) {
+          return (data['results'] as List)
+              .map((m) => Movie.fromJson(m as Map<String, dynamic>))
+              .toList();
+        }
+        return [];
+      }
+
+      throw Exception('Search failed: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Search network error: $e');
+    }
+  }
 }

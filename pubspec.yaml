@@ -20,13 +20,38 @@ dependencies:
   # 3. สำหรับการเชื่อมต่อ Backend (TMDB API) [cite: 33]
   http: ^1.2.0
 
-  # 4. ไอคอนเพิ่มเติม (ถ้าต้องการ)
+  # 4. Authentication backend
+  supabase_flutter: ^2.8.4
+
+  # 5. Pick/take profile photos
+  image_picker: ^1.1.2
+
+  # 6. ไอคอนเพิ่มเติม (ถ้าต้องการ)
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: assets/icon/app_icon_square.png
+    background_color: "#000000"
+    theme_color: "#000000"
+  windows:
+    generate: true
+    image_path: assets/icon/app_icon_square.png
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: assets/icon/app_icon_square.png
+  image_path: assets/icon/app_icon_square.png
 
 flutter:
   uses-material-design: true

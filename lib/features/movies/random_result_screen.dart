@@ -1,11 +1,41 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/constants.dart';
 import '../../services/api_service.dart';
 import '../../models/movie_model.dart';
-import '../../core/constants.dart';
+import 'movie_provider.dart';
 
-class RandomResultScreen extends StatelessWidget {
+class RandomResultScreen extends ConsumerStatefulWidget {
   const RandomResultScreen({super.key});
+
+  @override
+  ConsumerState<RandomResultScreen> createState() => _RandomResultScreenState();
+}
+
+class _RandomResultScreenState extends ConsumerState<RandomResultScreen> {
+  late final Future<List<Movie>> _moviesFuture;
+  List<Movie> _movies = const [];
+  Movie? _currentMovie;
+
+  @override
+  void initState() {
+    super.initState();
+    _moviesFuture = ApiService().fetchMovies(AppConstants.popularMovies);
+  }
+
+  Movie _pickRandomMovie(List<Movie> movies, {int? avoidId}) {
+    if (movies.length <= 1) return movies.first;
+
+    Movie candidate = movies[Random().nextInt(movies.length)];
+    while (candidate.id == avoidId) {
+      candidate = movies[Random().nextInt(movies.length)];
+    }
+    return candidate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +43,7 @@ class RandomResultScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Your Lucky Movie')),
       body: FutureBuilder<List<Movie>>(
         // ดึงหนังยอดนิยมมาเพื่อสุ่ม 1 เรื่องจากในนั้น
-        future: ApiService().fetchMovies(AppConstants.popularMovies),
+        future: _moviesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -24,21 +54,56 @@ class RandomResultScreen extends StatelessWidget {
             return const Center(child: Text('Error finding a movie'));
           }
 
-          // อัลกอริทึมสุ่ม: เลือก Index แบบสุ่มจาก List ที่ได้มา
-          final movies = snapshot.data!;
-          final randomMovie = movies[Random().nextInt(movies.length)];
+          if (_movies.isEmpty) {
+            _movies = snapshot.data!;
+            _currentMovie = _pickRandomMovie(_movies);
+          }
+
+          final randomMovie = _currentMovie!;
 
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    randomMovie.posterUrl,
-                    height: 400,
-                    fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: () {
+                    ref.read(selectedMovieProvider.notifier).state =
+                        randomMovie;
+                    context.pushNamed(RouteNames.detail);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: randomMovie.posterUrl.isEmpty
+                        ? Container(
+                            height: 400,
+                            width: 270,
+                            color: const Color(0xFF151925),
+                            child: const Icon(
+                              Icons.movie_creation_outlined,
+                              size: 48,
+                            ),
+                          )
+                        : Image.network(
+                            randomMovie.posterUrl,
+                            height: 400,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                              height: 400,
+                              width: 270,
+                              color: const Color(0xFF151925),
+                              child: const Icon(
+                                Icons.movie_creation_outlined,
+                                size: 48,
+                              ),
+                            ),
+                          ),
                   ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Tap poster to view details',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -59,8 +124,14 @@ class RandomResultScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton.icon(
-                  onPressed: () =>
-                      Navigator.pop(context), // กดย้อนกลับไปสุ่มใหม่
+                  onPressed: () {
+                    setState(() {
+                      _currentMovie = _pickRandomMovie(
+                        _movies,
+                        avoidId: _currentMovie?.id,
+                      );
+                    });
+                  },
                   icon: const Icon(Icons.refresh),
                   label: const Text('Try Again'),
                 ),

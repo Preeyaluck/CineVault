@@ -6,6 +6,10 @@ class Movie {
   final String summary;
   final String posterUrl;
   final double rating;
+  final String releaseDate;
+  final String language;
+  final int voteCount;
+  final double popularity;
 
   Movie({
     required this.id,
@@ -13,6 +17,10 @@ class Movie {
     required this.summary,
     required this.posterUrl,
     required this.rating,
+    required this.releaseDate,
+    required this.language,
+    required this.voteCount,
+    required this.popularity,
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
@@ -23,9 +31,13 @@ class Movie {
       // เช็กก่อนว่า poster_path มีค่าไหม ถ้าไม่มีให้ใช้รูป Placeholder แทน
       posterUrl: json['poster_path'] != null
           ? '${AppConstants.baseImageUrl}${json['poster_path']}'
-          : 'https://via.placeholder.com/500x750?text=No+Image',
+          : '',
       // ป้องกัน Error เวลา vote_average ส่งมาเป็น null หรือ int
       rating: (json['vote_average'] ?? 0.0).toDouble(),
+      releaseDate: (json['release_date'] ?? '').toString(),
+      language: (json['original_language'] ?? 'en').toString(),
+      voteCount: (json['vote_count'] ?? 0) as int,
+      popularity: (json['popularity'] ?? 0.0).toDouble(),
     );
   }
 }
