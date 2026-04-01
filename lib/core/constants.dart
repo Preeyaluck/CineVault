@@ -1,9 +1,9 @@
 class AppConstants {
   // --- API Configuration ---
   // นำ API Key ที่ได้จาก TMDB มาวางที่นี่
-  static const String tmdbApiKey = 'aae85ba42e6ebd8b869cd9a7e9317aec';
-  static const String baseUrl = 'https://api.themoviedb.org/3';
-  static const String baseImageUrl = 'https://image.tmdb.org/t/p/w500';
+  static const String tmdbApiKey = ' ';
+  static const String baseUrl = ' ';
+  static const String baseImageUrl = ' ';
 
   // --- API Endpoints ---
   static const String popularMovies = '/movie/popular';
@@ -15,9 +15,9 @@ class AppConstants {
 
   // --- Supabase Configuration ---
   // สามารถใส่ค่าจริงที่นี่ หรือส่งผ่าน --dart-define ก็ได้
-  static const String supabaseUrl = 'https://jxhzeuboddnnhgqrhpxq.supabase.co';
+  static const String supabaseUrl = ' ';
   static const String supabaseAnonKey =
-      'sb_publishable_rWy-QK27ZcjjSDni9TzkdA_u_qW9Ncp';
+      ' ';
 }
 
 // แยกส่วนของ Route Names เพื่อใช้ใน GoRouter
